@@ -82,11 +82,7 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
         }
     )
     
-    val lockFile = LockFile.readToResult().getOrElse {
-        terminal.pError(it)
-        echo()
-        return@runBlocking
-    }
+    val lockFile = LockFile.readToResult().get() 
 
     val updatedFiles = (newFiles.take(numberOfFiles) + accProject.files)
     // filterNot(x) == filter(!x)
