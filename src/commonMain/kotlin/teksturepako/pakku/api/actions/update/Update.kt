@@ -13,6 +13,7 @@ import teksturepako.pakku.api.projects.Project
 import teksturepako.pakku.api.projects.UpdateStrategy
 import teksturepako.pakku.api.projects.inheritPropertiesFrom
 import teksturepako.pakku.io.mapAsync
+import teksturepako.pakku.api.data.LockFile
 
 /**
  * Requests new data for provided [projects] from all platforms and updates them based on platform-specific slugs,
@@ -80,6 +81,12 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
             accFile.loaders.indexOfFirst { it in file.loaders }.let { if (it == -1) accFile.loaders.size else it }
         }
     )
+    
+    val lockFile = LockFile.readToResult().getOrElse {
+        terminal.pError(it)
+        echo()
+        return@runBlocking
+    }
 
     val updatedFiles = (newFiles.take(numberOfFiles) + accProject.files)
     // filterNot(x) == filter(!x)
