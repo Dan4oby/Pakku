@@ -82,8 +82,13 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
     )
 
     val updatedFiles = (newFiles.take(numberOfFiles) + accProject.files)
-        .filterNot { projectFile ->
-            projectFile.type == platformName && projectFile.datePublished < accPublished
+    // filterNot(x) == filter(!x)
+    .filter { projectFile ->
+        !(projectFile.type == platformName &&
+        projectFile.datePublished < accPublished) ||
+
+        (projectFile.mcVersions.none { it in accFile.mcVersions } &&
+         projectFile.mcVersions.any {it in lockFile.mcVersions})
         }
         .distinctBy { it.type }
         .toMutableSet()
