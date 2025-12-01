@@ -52,7 +52,7 @@ suspend fun updateMultipleProjectsWithFiles(
 
         accProjects.map { accProject ->
             platformProjects?.find { it.slug[platform.serialName] == accProject.slug[platform.serialName] }
-                ?.let { newProject -> combineProjects(accProject, newProject, platform.serialName, numberOfFiles) }
+                ?.let { newProject -> combineProjects(accProject, newProject, platform.serialName, numberOfFiles, mcVersions) }
                 ?: accProject
         }.toMutableSet()
     }
@@ -61,14 +61,14 @@ suspend fun updateMultipleProjectsWithFiles(
 
     updatedProjects.map { accProject ->
         ghProjects.find { it.slug[GitHub.serialName] == accProject.slug[GitHub.serialName] }
-            ?.let { newProject -> combineProjects(accProject, newProject, GitHub.serialName, numberOfFiles) }
+            ?.let { newProject -> combineProjects(accProject, newProject, GitHub.serialName, numberOfFiles, mcVersions) }
             ?: accProject
     }
         .filter { it.updateStrategy == UpdateStrategy.LATEST && it !in projects }
         .toMutableSet()
 }
 
-fun combineProjects(accProject: Project, newProject: Project, platformName: String, numberOfFiles: Int): Project
+fun combineProjects(accProject: Project, newProject: Project, platformName: String, numberOfFiles: Int, mcVersions: List<String>): Project
 {
     val accFile = accProject.files.filter { projectFile ->
         projectFile.type == platformName
@@ -91,7 +91,7 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
         projectFile.datePublished < accPublished) ||
 
         (projectFile.mcVersions.none { it in accFile.mcVersions } &&
-         projectFile.mcVersions.any { it in lockFile.getMcVersions() })
+         projectFile.mcVersions.any { it in mcVersions })
         }
         .distinctBy { it.type }
         .toMutableSet()
