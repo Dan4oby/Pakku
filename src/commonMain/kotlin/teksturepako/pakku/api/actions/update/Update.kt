@@ -91,7 +91,7 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
         projectFile.datePublished < accPublished) ||
 
         (projectFile.mcVersions.none { it in accFile.mcVersions } &&
-         projectFile.mcVersions.any {it in lockFile.mcVersions})
+         projectFile.mcVersions.any { it in lockFile.getMcVersions() })
         }
         .distinctBy { it.type }
         .toMutableSet()
