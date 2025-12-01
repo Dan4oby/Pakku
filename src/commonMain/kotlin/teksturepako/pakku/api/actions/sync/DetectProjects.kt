@@ -105,7 +105,7 @@ suspend fun detectProjects(
         .fold(platformsToProjects.flatMap { it.second }) { accProjects, (platform, platformProjects) ->
             accProjects.map { accProject ->
                 platformProjects.find { it isAlmostTheSameAs accProject }
-                    ?.let { newProject -> combineProjects(accProject, newProject, platform.serialName, 1) }
+                    ?.let { newProject -> combineProjects(accProject, newProject, platform.serialName, 1, lockFile.getMcVersions()) }
                     ?: accProject
             }
         }
