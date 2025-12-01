@@ -81,8 +81,6 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
             accFile.loaders.indexOfFirst { it in file.loaders }.let { if (it == -1) accFile.loaders.size else it }
         }
     )
-    
-    val lockFile = LockFile.readToResult().get() 
 
     val updatedFiles = (newFiles.take(numberOfFiles) + accProject.files)
     // filterNot(x) == filter(!x)
