@@ -68,7 +68,7 @@ suspend fun updateMultipleProjectsWithFiles(
         .toMutableSet()
 }
 
-fun combineProjects(accProject: Project, newProject: Project, platformName: String, numberOfFiles: Int, mcVersions: List<String>): Project
+fun combineProjects(accProject: Project, newProject: Project, platformName: String, numberOfFiles: Int, mcVersions: List<String>? = null): Project
 {
     val accFile = accProject.files.filter { projectFile ->
         projectFile.type == platformName
@@ -88,8 +88,11 @@ fun combineProjects(accProject: Project, newProject: Project, platformName: Stri
         !(projectFile.type == platformName &&
         projectFile.datePublished < accPublished) ||
 
-        ((accFile == null || projectFile.mcVersions.none { it in accFile.mcVersions }) &&
-         projectFile.mcVersions.any { it in mcVersions })
+        (
+            mcVersions != null &&
+            (accFile == null || projectFile.mcVersions.none { it in accFile.mcVersions }) &&
+            projectFile.mcVersions.any { it in mcVersions }
+        )
         }
         .distinctBy { it.type }
         .toMutableSet()
